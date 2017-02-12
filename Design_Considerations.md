@@ -13,4 +13,12 @@
 
 - Measure the width of the nanowires (Arushi) . 
 
-## About the Data (Wes) 
+## About the Data (Wes)
+- The dataset is generated experimentally through AFM imaging by the group
+  - One training set will be used for nanowire/edge identification, as well as "node" and defect exclusion
+  - One training set will be used for measurement training (minimum width/height, exclude AFM tip influences)
+  - Testing and verification datasets can be generated as well
+- Pixels contain x, y, and z data, where z is really just intensity
+  - The z data can be a number of things, like: Phase, height, conductivity, IR activity at a given $\lambda$
+- Raw data needs to be leveled (background) and treated for line scars
+- The data files are *SHAPE and SIZE*
