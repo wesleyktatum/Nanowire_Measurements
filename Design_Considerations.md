@@ -6,12 +6,17 @@
 - Profit
 
 ## Use Cases  
-- Measure height of nanowires (Yatong)
+###1. Measure height of nanowires (Yatong)
  - Use Case Name: Height Measurement of Nanowires
  - Actor: user, the program we are about to build
  - Description: The user will upload the data from Atomic Force Microscope of nanowires into the program. The program will then identify the intensity difference, screen out the special situation in which there is, for example, an overlap of nanowires, a random bent of nanowires or a lift by nods that causes the height to rise, and at last return the accurate average height of nanowires inside the scan size. 
 
-- Measure the width of the nanowires (Arushi) . 
+###2. Measure the width of the nanowires (Arushi) . 
+- **Name**: Girth Detector
+- **Desription**: For a given AFM input data (.txt file with height data or .png image), the code can identify the outlines of the nanowires and identify the cross-sectional width of the nanowire. After collecting this data from input, it can generate a histogram of wire widths.  
+- **Actors** - A user without knowledge of python should be able to use it, preferably with command line inputs where the user can specify filenames, and other conditions. 
+- **Precondition** - It assumes that all samples in the AFM image are nanowires and all other structures are absent. For the simplest case, the code will ignore errors that arise from a tilted samples, over exposure, et cetera.  
+- **Basic Flow**
 
 ## About the Data (Wes)
 - The dataset is generated experimentally through AFM imaging by the group
