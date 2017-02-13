@@ -1,9 +1,9 @@
 ## Big Picture Design  (Nick)
-- Feed in data file (SEM, TEM, SPM, etc.)
-- Use edge detection and depth detection algorithms to determine height and width of objects in micrographs (e.g. nanowires, nanoparticles)
-- Ideally, this software can read any image and determine the width and height of any "picture" of any object, given appropriate scale
-- ???
-- Profit
+- Project Name: Micrograph Visual Analysis for Nanometer-Scale Characterization
+- Software that reads in a micrograph, likely from a scanning probe microscopy, and determines physical characteristics of the material being scanned
+- This will be most intuitive on AFM-type data, but we plan to find a way to generalize it to electron microscopy as well (where depth tends not to be well defined)
+- Software will be useful to scientists who have little working knowledge of python but need to quickly interpret the results of their experiments, especially if they are looking for materials with certain shapes and sizes
+- Visual analysis like this applies to all kinds of work in nanotechnology and should be useful for optimizing any material that requires nanoscale precision (e.g. plasmonic metamaterials, quantum computing, organic or inorganic PV devices, etc.)
 
 ## Use Cases  
 ###1. Measure height of nanowires (Yatong)
