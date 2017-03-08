@@ -1,6 +1,6 @@
 #Creates two identical panels.  Zooming in on the right panel will show
 # a rectangle in the first panel, denoting the zoomed region.
-import numpy as np, sys
+import numpy as np, sys, os
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import tkinter as tk
@@ -53,7 +53,7 @@ class MandelbrotDisplay(object):
         im.set_extent((xstart, xend, ystart, yend))
         ax.figure.canvas.draw_idle()
 
-def UploadFile():
+def upload_file():
     """ Upload the chosen file and plot the nanowire image onto the canvas"""
 
     filename = filedialog.askopenfilename() #upload file
@@ -81,7 +81,7 @@ def UploadFile():
     canvas.get_tk_widget().pack()
     toolbar = NavigationToolbar2TkAgg(canvas, top) #create navigation tool bar that contains the zoom-in/crop option
     toolbar.update()
-    canvas._tkcanvas.pack(side=tkinter.TOP)
+    canvas._tkcanvas.pack(side=tk.TOP)
     
     return
 
@@ -99,14 +99,23 @@ def process_second():
     label.pack()
     return
 
+def restart_program():
+    """Restarts the current program.
+    Note: this function does not return. Any cleanup action (like
+    saving data) must be done before calling this function."""
+    python = sys.executable
+    os.execl(python, python, * sys.argv)
+
 top = tk.Tk()
-B = tk.Button(top, text="Upload", command = UploadFile) #create the button
+B = tk.Button(top, text="Upload", command = upload_file) #create the button
 A = tk.Button(top, text="Process in opencv Algorithm", command = process_opencv)
 C = tk.Button(top, text="Process in second Algorithm", command = process_second)
+D = tk.Button(top, text="Restart", command = restart_program)
 #create the button for process image
 
 B.pack()
 C.pack(side="bottom")
 A.pack(side="bottom") #set the position of process button to always at the bottom
+D.pack()
 top.mainloop()
 
