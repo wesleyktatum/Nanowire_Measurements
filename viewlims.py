@@ -54,7 +54,7 @@ class MandelbrotDisplay(object):
         im.set_extent((xstart, xend, ystart, yend))
         ax.figure.canvas.draw_idle()
 
-def UploadFile():
+def upload_file():
     """ Upload the chosen file and plot the nanowire image onto the canvas"""
 
     filename = filedialog.askopenfilename() #upload file
@@ -82,20 +82,43 @@ def UploadFile():
     canvas.get_tk_widget().pack()
     toolbar = NavigationToolbar2TkAgg(canvas, top) #create navigation tool bar that contains the zoom-in/crop option
     toolbar.update()
-    canvas._tkcanvas.pack(side=tkinter.TOP)
+    canvas._tkcanvas.pack(side=tk.TOP)
     
     return
-    
-def process_functions():   
+
+def process_opencv():
+    var = tk.StringVar()
+    label = tk.Label(top, textvariable=var)
+    var.set("In the process of opencv algorithm")
+    label.pack()
     return
+
+def process_second():
+    var = tk.StringVar()
+    label = tk.Label(top, textvariable=var)
+    var.set("In the process of second algorithm")
+    label.pack()
+    return
+
+def restart_program():
+    """Restarts the current program.
+    Note: this function does not return. Any cleanup action (like
+    saving data) must be done before calling this function."""
+    python = sys.executable
+    os.execl(python, python, * sys.argv)
 
 top = tk.Tk()
-B = tk.Button(top, text="Upload", command = UploadFile) #create the button for upload file
-A = tk.Button(top, text="Process", command = process_functions) #create the button for process image
+B = tk.Button(top, text="Upload", command = upload_file)
+A = tk.Button(top, text="Process in opencv Algorithm", command = process_opencv)
+C = tk.Button(top, text="Process in second Algorithm", command = process_second)
+D = tk.Button(top, text="Restart", command = restart_program)
+#create the buttons
 
 B.pack()
+C.pack(side="bottom")
 A.pack(side="bottom") #set the position of process button to always at the bottom
-top.mainloop()
+D.pack()
+top.mainloop() 
 
 
 
