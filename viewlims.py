@@ -54,15 +54,29 @@ class MandelbrotDisplay(object):
         im.set_extent((xstart, xend, ystart, yend))
         ax.figure.canvas.draw_idle()
 
+def clear_canvas():
+    """Deletes previous canvases"""
+    if len(canvases) > 0 : 
+        for canvas in canvases: 
+            canvas.get_tk_widget().delete("all")
+            canvas.get_tk_widget().destroy()
+
+    return
+
 def upload_file():
     """ Upload the chosen file and plot the nanowire image onto the canvas"""
 
     filename = filedialog.askopenfilename() #upload file
-    #afmdata=np.genfromtxt(filename)
+    
     md = MandelbrotDisplay(d=filename)
     xmax, ymax = np.shape(md.data)
+    
+    clear_canvas()
+    
     Z = md(0,xmax,0,ymax)
     fig1, (ax1, ax2) = plt.subplots(1, 2)
+    
+    
     ax1.imshow(Z, origin='lower', extent=(0,xmax,0,ymax))
     ax2.imshow(Z, origin='lower', extent=(0,xmax,0,ymax))
     
@@ -74,30 +88,51 @@ def upload_file():
     ax2.callbacks.connect('xlim_changed', md.ax_update)
     ax2.callbacks.connect('ylim_changed', md.ax_update)
     ax2.set_title("Zoom here")
-    #plt.show()
     
     
     canvas = FigureCanvasTkAgg(fig1, top) #create canvas
+    canvases.append(canvas)
     canvas.show()
     canvas.get_tk_widget().pack()
-    toolbar = NavigationToolbar2TkAgg(canvas, top) #create navigation tool bar that contains the zoom-in/crop option
+    #create navigation tool bar that contains the zoom-in/crop option
+    toolbar = NavigationToolbar2TkAgg(canvas, top) 
     toolbar.update()
     canvas._tkcanvas.pack(side=tk.TOP)
+    #frame1.pack(side=tk.TOP, fill=tk.X)
     
     return
 
-def process_opencv():
-    var = tk.StringVar()
-    label = tk.Label(top, textvariable=var)
-    var.set("In the process of opencv algorithm")
+def update_status(message):
+    """Status updates to the user
+    Note: Previous status updates are deleted."""
+    
+    # Checking and deleting previous labels
+    if len(labels) > 0:
+        for label in labels: label.destroy()
+            
+    # Configuring the new label
+    label = tk.Label(top, text=message)
     label.pack()
+    labels.append(label)
+    
+    return
+    
+def process_opencv():
+    
+    update_status("Processing image in OpenCV. Please wait ...")
+    
+    # ADD PROCESSING CODE HERE
+    
+    update_status("OpenCV done")
+ 
     return
 
 def process_second():
-    var = tk.StringVar()
-    label = tk.Label(top, textvariable=var)
-    var.set("In the process of second algorithm")
-    label.pack()
+    
+    update_status("Processing image in OpenCV. Please wait ...")
+    
+    update_status("Second algorithm done")
+ 
     return
 
 def restart_program():
@@ -107,12 +142,33 @@ def restart_program():
     python = sys.executable
     os.execl(python, python, * sys.argv)
 
+# FOR BOOK KEEPING
+# Maintaining all the labels here
+labels=[]
+# Maintaining all the canvases here
+canvases=[]
+    
+# CONFIGURING THE GUI OBJECT
 top = tk.Tk()
+# Background color
+top.configure(background='#f7fcb9')
+# Name of program
+top.title("NaRWHAL: Nanowire Recognition of Width and Height Analytical Library")
+# Size of window
+top.geometry('{}x{}'.format(1000, 800))
+# Exits when you hit Esc
+top.bind("<Escape>", lambda e: e.widget.quit())
+
+
+
+
+#create the buttons
 B = tk.Button(top, text="Upload", command = upload_file)
 A = tk.Button(top, text="Process in opencv Algorithm", command = process_opencv)
 C = tk.Button(top, text="Process in second Algorithm", command = process_second)
-D = tk.Button(top, text="Restart", command = restart_program)
-#create the buttons
+D = tk.Button(top, text="Restart", command = clear_canvas)
+
+
 
 B.pack()
 C.pack(side="bottom")
