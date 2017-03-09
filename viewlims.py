@@ -1,6 +1,6 @@
 #Creates two identical panels.  Zooming in on the right panel will show
 # a rectangle in the first panel, denoting the zoomed region.
-import numpy as np, sys, os
+import numpy as np, sys, os, webbrowser
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import tkinter as tk
@@ -134,6 +134,10 @@ def upload_file():
     
     return
 
+def open_webpage(url):
+    webbrowser.open_new(url)
+    return
+
 def update_status(message):
     """Status updates to the user
     Note: Previous status updates are deleted."""
@@ -189,26 +193,26 @@ top.configure(background='#f7fcb9')
 # Name of program
 top.title("NaRWHAL: Nanowire Recognition of Width and Height Analytical Library")
 # Size of window
-top.geometry('{}x{}'.format(1000, 800))
+top.geometry('{}x{}'.format(800, 500))
 # Exits when you hit Esc
 top.bind("<Escape>", lambda e: e.widget.quit())
 
+# Creating a menubar
+menubar = tk.Menu(top)
 
+file_menu = tk.Menu(top, tearoff=0)
+file_menu.add_command(label="Upload", command=upload_file)
+file_menu.add_command(label="Documentation", command=open_webpage("https://github.com/wesleyktatum/Nanowire_Measurements"))
+file_menu.add_command(label="Quit    [Esc]", command=top.quit)
+menubar.add_cascade(label="File", menu=file_menu)
 
+process_menu = tk.Menu(top, tearoff=0)
+process_menu.add_command(label="Process in opencv Algorithm", command = process_opencv)
+process_menu.add_command(label="Process in opencv Algorithm", command = process_opencv)
+menubar.add_cascade(label="Data Processing", menu=process_menu)
 
-#create the buttons
-B = tk.Button(top, text="Upload", command = upload_file)
-A = tk.Button(top, text="Process in opencv Algorithm", command = process_opencv)
-C = tk.Button(top, text="Process in second Algorithm", command = process_second)
-D = tk.Button(top, text="Restart", command = clear_canvas)
-
-
-
-
-B.pack()
-C.pack(side="bottom")
-A.pack(side="bottom") #set the position of process button to always at the bottom
-D.pack()
+# Configuring the window with menubar
+top.config(menu=menubar)
 top.mainloop() 
 
 
