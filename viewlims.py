@@ -11,6 +11,11 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
 
+#class NavigationToolbar(NavigationToolbar2GTKAgg):
+#    # only display the buttons we need
+#    toolitems = [t for t in NavigationToolbar2GTKAgg.toolitems if
+#                 t[0] in ('Home', 'Zoom')]
+
 
 # We just subclass Rectangle so that it can be called with an Axes
 # instance, causing the rectangle to update its shape to match the
@@ -60,7 +65,9 @@ def clear_canvas():
         for canvas in canvases: 
             canvas.get_tk_widget().delete("all")
             canvas.get_tk_widget().destroy()
-
+    if len(toolbars) > 0 : 
+        for toolbar in toolbars: 
+            toolbar.destroy()
     return
 
 def upload_file():
@@ -97,6 +104,7 @@ def upload_file():
     #create navigation tool bar that contains the zoom-in/crop option
     toolbar = NavigationToolbar2TkAgg(canvas, top) 
     toolbar.update()
+    toolbars.append(toolbar)
     canvas._tkcanvas.pack(side=tk.TOP)
     #frame1.pack(side=tk.TOP, fill=tk.X)
     
@@ -147,6 +155,8 @@ def restart_program():
 labels=[]
 # Maintaining all the canvases here
 canvases=[]
+# Maintaining all the toolbars here
+toolbars=[]
     
 # CONFIGURING THE GUI OBJECT
 top = tk.Tk()
