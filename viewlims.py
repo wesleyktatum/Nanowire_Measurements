@@ -202,7 +202,8 @@ menubar = tk.Menu(top)
 
 file_menu = tk.Menu(top, tearoff=0)
 file_menu.add_command(label="Upload", command=upload_file)
-file_menu.add_command(label="Documentation", command=open_webpage("https://github.com/wesleyktatum/Nanowire_Measurements"))
+doc_url="https://github.com/wesleyktatum/Nanowire_Measurements"
+file_menu.add_command(label="Documentation", command=open_webpage(doc_url))
 file_menu.add_command(label="Quit    [Esc]", command=top.quit)
 menubar.add_cascade(label="File", menu=file_menu)
 
