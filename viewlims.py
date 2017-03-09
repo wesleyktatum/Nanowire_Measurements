@@ -11,11 +11,15 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
 
-#class NavigationToolbar(NavigationToolbar2GTKAgg):
-#    # only display the buttons we need
-#    toolitems = [t for t in NavigationToolbar2GTKAgg.toolitems if
-#                 t[0] in ('Home', 'Zoom')]
 
+class CustomToolbar(NavigationToolbar2TkAgg):
+    """Creates custom toolbar"""
+    def __init__(self,canvas_,parent_):
+        self.toolitems = (
+            ('Zoom', 'Manually zoom into image', 'zoom_to_rect', 'zoom'),
+            ('Home', 'Revert to original image', 'home', 'home'),
+            )
+        NavigationToolbar2TkAgg.__init__(self,canvas_,parent_)
 
 # We just subclass Rectangle so that it can be called with an Axes
 # instance, causing the rectangle to update its shape to match the
@@ -101,12 +105,13 @@ def upload_file():
     canvases.append(canvas)
     canvas.show()
     canvas.get_tk_widget().pack()
-    #create navigation tool bar that contains the zoom-in/crop option
-    toolbar = NavigationToolbar2TkAgg(canvas, top) 
+    
+    # Create navigation tool bar that contains the zoom-in/crop option
+    toolbar = CustomToolbar(canvas, top) 
     toolbar.update()
     toolbars.append(toolbar)
     canvas._tkcanvas.pack(side=tk.TOP)
-    #frame1.pack(side=tk.TOP, fill=tk.X)
+
     
     return
 
