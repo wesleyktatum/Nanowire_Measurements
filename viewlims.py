@@ -6,7 +6,7 @@ from matplotlib.patches import Rectangle
 import tkinter as tk
 from tkinter import filedialog
 import cv2
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg,  NavigationToolbar2
 # implement the default mpl key bindings
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
@@ -85,6 +85,20 @@ def upload_file():
     clear_canvas()
     
     Z = md(0,xmax,0,ymax)
+    
+    params = {
+   'axes.labelsize': 15,
+   'font.size': 15,
+   'legend.fontsize': 15,
+   'xtick.labelsize': 15,
+   'ytick.labelsize': 15,
+   'axes.facecolor': 'CCCCCC',
+   'figure.facecolor':'#f7fcb9',
+   'text.usetex': False,
+   'figure.figsize': [5.0, 3.5] }
+    
+    plt.rcParams.update(params)
+    
     fig1, (ax1, ax2) = plt.subplots(1, 2)
     
     
@@ -94,24 +108,29 @@ def upload_file():
     rect = UpdatingRect([0, 0], 0, 0, facecolor='None', edgecolor='black', linewidth=1.0)
     rect.set_bounds(*ax2.viewLim.bounds)
     ax1.add_patch(rect)
+    
+    # Disable zooming into plot 1
+    ax1.set_navigate(False)
+    
+    
     ax2.callbacks.connect('xlim_changed', rect)
     ax2.callbacks.connect('ylim_changed', rect)
     ax2.callbacks.connect('xlim_changed', md.ax_update)
     ax2.callbacks.connect('ylim_changed', md.ax_update)
     ax2.set_title("Zoom here")
     
+    # Create canvas and toolbar
+    canvas = FigureCanvasTkAgg(fig1, top) 
+    toolbar = CustomToolbar(canvas, top)
     
-    canvas = FigureCanvasTkAgg(fig1, top) #create canvas
+    # Book keeping
     canvases.append(canvas)
-    canvas.show()
-    canvas.get_tk_widget().pack()
-    
-    # Create navigation tool bar that contains the zoom-in/crop option
-    toolbar = CustomToolbar(canvas, top) 
-    toolbar.update()
     toolbars.append(toolbar)
-    canvas._tkcanvas.pack(side=tk.TOP)
-
+    
+    # Packing the toolbar and plot into the canvas
+    toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
     
     return
 
@@ -182,6 +201,7 @@ B = tk.Button(top, text="Upload", command = upload_file)
 A = tk.Button(top, text="Process in opencv Algorithm", command = process_opencv)
 C = tk.Button(top, text="Process in second Algorithm", command = process_second)
 D = tk.Button(top, text="Restart", command = clear_canvas)
+
 
 
 
