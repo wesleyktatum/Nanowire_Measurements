@@ -11,21 +11,23 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # implement the default mpl key bindings
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
+
+
 class AfmDisplay(object):
 
-    def __init__(self, h=500, w=500, d='part1.txt'):
+    def __init__(self, h=500, w=500, d=''):
     	"""Initialize variables"""
         self.height = h
         self.width = w
-        # self.data=np.genfromtxt(sys.argv[1])
-        self.data = np.genfromtxt(d)
+        self.data = d
+        self.subset = np.copy(d)
 
     def __call__(self, xstart, xend, ystart, yend):
     	"""Crops user-image according to zoomed data"""
-        threshold_time = self.data[
+        self.subset = self.data[
             int(ystart):int(yend),
             int(xstart):int(xend)]
-        return threshold_time
+        return self.subset
 
     def ax_update(self, ax):
     	"""Updates the figure axes to zoom in"""

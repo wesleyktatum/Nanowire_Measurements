@@ -18,28 +18,36 @@ import AfmDisplay, CustomToolbar, UpdatingRect
 
 def clear_canvas():
     """Deletes previous canvases"""
-    if len(canvases) > 0:
-        for canvas in canvases:
-            canvas.get_tk_widget().delete("all")
-            canvas.get_tk_widget().destroy()
+    
     if len(toolbars) > 0:
-        for toolbar in toolbars:
-            toolbar.destroy()
+        toolbars[-1].destroy()
+            
+    if len(canvases) > 0:
+    	canvases[-1].get_tk_widget().delete("all")
+    	canvases[-1].get_tk_widget().destroy()
+
     return
 
 
 def upload_file():
     """ Upload the chosen file and plot the nanowire image onto the canvas"""
+    filename = filedialog.askopenfilename()
+    file_data=np.genfromtxt(filename)
+    
+    global md
+    md = AfmDisplay.AfmDisplay(d=file_data)
 
-    filename = filedialog.askopenfilename()  # upload file
+    plot_data(md)
+    
+    return
 
-    md = AfmDisplay.AfmDisplay(d=filename)
+def plot_data(md):
+
+
+    
     xmax, ymax = np.shape(md.data)
-
-    clear_canvas()
-
     Z = md(0, xmax, 0, ymax)
-
+    
     params = {
         'axes.labelsize': 15,
         'font.size': 15,
@@ -55,8 +63,8 @@ def upload_file():
 
     fig1, (ax1, ax2) = plt.subplots(1, 2)
 
-    ax1.imshow(Z, origin='lower', extent=(0, xmax, 0, ymax))
-    ax2.imshow(Z, origin='lower', extent=(0, xmax, 0, ymax))
+    ax1.matshow(Z, origin='lower', extent=(0, xmax, 0, ymax), cmap=color_code)
+    ax2.matshow(Z, origin='lower', extent=(0, xmax, 0, ymax), cmap=color_code)
 
     rect = UpdatingRect.UpdatingRect([0, 0], 0, 0, facecolor='None',
                         edgecolor='black', linewidth=1.0)
@@ -84,9 +92,19 @@ def upload_file():
     toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
     canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-
+    
     return
 
+def recolor(color_selection):
+	global color_code
+	color_code=color_selection
+	
+	global md
+	clear_canvas()
+	plot_data(md)
+	
+	return
+	
 
 def open_webpage(url):
     webbrowser.open_new(url)
@@ -135,7 +153,7 @@ def restart_program():
     Note: this function does not return. Any cleanup action (like
     saving data) must be done before calling this function."""
     python = sys.executable
-    os.execl(python, python, * sys.argv)
+    os.execl(python, python, *sys.argv)
 
 # FOR BOOK KEEPING
 # Maintaining all the labels here
@@ -144,6 +162,10 @@ labels = []
 canvases = []
 # Maintaining all the toolbars here
 toolbars = []
+# Input file
+md=0
+color_code='viridis'
+
 
 # CONFIGURING THE GUI OBJECT
 top = tk.Tk()
@@ -162,10 +184,11 @@ menubar = tk.Menu(top)
 file_menu = tk.Menu(top, tearoff=0)
 file_menu.add_command(label="Upload", command=upload_file)
 doc_url = "https://github.com/wesleyktatum/Nanowire_Measurements"
-file_menu.add_command(label="Documentation", command=open_webpage(doc_url))
+file_menu.add_command(label="Documentation", command=lambda: open_webpage(doc_url))
 file_menu.add_command(label="Quit    [Esc]", command=top.quit)
 menubar.add_cascade(label="File", menu=file_menu)
 
+# Nanowire Detection menu
 process_menu = tk.Menu(top, tearoff=0)
 process_menu.add_command(
     label="Process in opencv Algorithm",
@@ -173,7 +196,33 @@ process_menu.add_command(
 process_menu.add_command(
     label="Process in opencv Algorithm",
     command=process_opencv)
-menubar.add_cascade(label="Data Processing", menu=process_menu)
+menubar.add_cascade(label="Nanowire Detection", menu=process_menu)
+
+# Color sub-menu
+color_menu = tk.Menu(top, tearoff=0)
+color_menu.add_command(
+    label="Viridis",
+    command=lambda: recolor('viridis'))
+color_menu.add_command(
+    label="Inferno",
+    command=lambda: recolor('inferno'))
+color_menu.add_command(
+    label="Plasma",
+    command=lambda: recolor('plasma'))
+color_menu.add_command(
+    label="Magma",
+    command=lambda: recolor('magma'))
+
+# Image Manipulation menu
+correct_menu = tk.Menu(top, tearoff=0)
+correct_menu.add_command(
+    label="Background slope removal",
+    command=process_opencv)
+correct_menu.add_cascade(
+    label="Colors",
+    menu=color_menu)
+menubar.add_cascade(label="Image Manipulation", menu=correct_menu)
+
 
 # Configuring the window with menubar
 top.config(menu=menubar)
