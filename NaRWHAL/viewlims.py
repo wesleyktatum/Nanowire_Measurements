@@ -13,18 +13,20 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # implement the default mpl key bindings
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
-import AfmDisplay, CustomToolbar, UpdatingRect
+import AfmDisplay
+import CustomToolbar
+import UpdatingRect
 
 
 def clear_canvas():
     """Deletes previous canvases"""
-    
+
     if len(toolbars) > 0:
         toolbars[-1].destroy()
-            
+
     if len(canvases) > 0:
-    	canvases[-1].get_tk_widget().delete("all")
-    	canvases[-1].get_tk_widget().destroy()
+        canvases[-1].get_tk_widget().delete("all")
+        canvases[-1].get_tk_widget().destroy()
 
     return
 
@@ -32,22 +34,21 @@ def clear_canvas():
 def upload_file():
     """ Upload the chosen file and plot the nanowire image onto the canvas"""
     filename = filedialog.askopenfilename()
-    file_data=np.genfromtxt(filename)
-    
+    file_data = np.genfromtxt(filename)
+
     global md
     md = AfmDisplay.AfmDisplay(d=file_data)
 
     plot_data(md)
-    
+
     return
+
 
 def plot_data(md):
 
-
-    
     xmax, ymax = np.shape(md.data)
     Z = md(0, xmax, 0, ymax)
-    
+
     params = {
         'axes.labelsize': 15,
         'font.size': 15,
@@ -67,7 +68,7 @@ def plot_data(md):
     ax2.matshow(Z, origin='lower', extent=(0, xmax, 0, ymax), cmap=color_code)
 
     rect = UpdatingRect.UpdatingRect([0, 0], 0, 0, facecolor='None',
-                        edgecolor='black', linewidth=1.0)
+                                     edgecolor='black', linewidth=1.0)
     rect.set_bounds(*ax2.viewLim.bounds)
     ax1.add_patch(rect)
 
@@ -92,19 +93,20 @@ def plot_data(md):
     toolbar.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
     canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-    
+
     return
 
+
 def recolor(color_selection):
-	global color_code
-	color_code=color_selection
-	
-	global md
-	clear_canvas()
-	plot_data(md)
-	
-	return
-	
+    global color_code
+    color_code = color_selection
+
+    global md
+    clear_canvas()
+    plot_data(md)
+
+    return
+
 
 def open_webpage(url):
     webbrowser.open_new(url)
@@ -163,8 +165,8 @@ canvases = []
 # Maintaining all the toolbars here
 toolbars = []
 # Input file
-md=0
-color_code='viridis'
+md = 0
+color_code = 'viridis'
 
 
 # CONFIGURING THE GUI OBJECT
@@ -184,7 +186,9 @@ menubar = tk.Menu(top)
 file_menu = tk.Menu(top, tearoff=0)
 file_menu.add_command(label="Upload", command=upload_file)
 doc_url = "https://github.com/wesleyktatum/Nanowire_Measurements"
-file_menu.add_command(label="Documentation", command=lambda: open_webpage(doc_url))
+file_menu.add_command(
+    label="Documentation",
+    command=lambda: open_webpage(doc_url))
 file_menu.add_command(label="Quit    [Esc]", command=top.quit)
 menubar.add_cascade(label="File", menu=file_menu)
 
