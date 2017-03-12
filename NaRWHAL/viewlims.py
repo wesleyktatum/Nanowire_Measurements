@@ -31,15 +31,48 @@ def clear_canvas():
 
     return
 
+def get_lims():
+	master = tk.Tk()
+	
+	msg = tk.Label(master, text="Enter limits").grid(row=0)
+	
+	
+	tk.Label(master, text="Min X [ nm ]").grid(row=1, column=0)
+	tk.Label(master, text="Max X [ nm ]").grid(row=1, column=2)
+	tk.Label(master, text="Min Y [ nm ]").grid(row=2, column=0)
+	tk.Label(master, text="Max Y [ nm ]").grid(row=2, column=2)
+
+	min_x = tk.Entry(master)
+	min_y = tk.Entry(master)
+	max_y = tk.Entry(master)
+	max_x = tk.Entry(master)
+	
+	min_x.insert(10,"0")
+	min_y.insert(10,"0")
+	max_x.insert(10,"500")
+	max_y.insert(10,"500")
+
+	min_x.grid(row=1, column=1)
+	min_y.grid(row=2, column=1)
+	max_x.grid(row=1, column=3)
+	max_y.grid(row=2, column=3)
+	
+
+	button = tk.Button(master, text="Dismiss", command=master.destroy).grid(row=3)
+	
+	#return
+
 
 def upload_file():
     """ Upload the chosen file and plot the nanowire image onto the canvas"""
     filename = filedialog.askopenfilename()
     file_data = np.genfromtxt(filename)
+    
+    get_lims()
+    
 
     global md
     md = AfmDisplay.AfmDisplay(d=file_data)
-
     plot_data(md)
 
     return
@@ -203,6 +236,9 @@ toolbars = []
 # Input file
 md = 0
 color_code = 'viridis'
+# Ranges
+xmin, xmax=0.0,0.0
+ymin, ymax=0.0,0.0
 
 
 # CONFIGURING THE GUI OBJECT
