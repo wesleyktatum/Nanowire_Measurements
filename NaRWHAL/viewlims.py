@@ -16,6 +16,7 @@ from matplotlib.figure import Figure
 import AfmDisplay
 import CustomToolbar
 import UpdatingRect
+import backgroundremoval
 
 
 def clear_canvas():
@@ -49,23 +50,13 @@ def plot_data(md):
     xmax, ymax = np.shape(md.data)
     Z = md(0, xmax, 0, ymax)
 
-    params = {
-        'axes.labelsize': 15,
-        'font.size': 15,
-        'legend.fontsize': 15,
-        'xtick.labelsize': 15,
-        'ytick.labelsize': 15,
-        'axes.facecolor': 'CCCCCC',
-        'figure.facecolor': '#f7fcb9',
-        'text.usetex': False,
-        'figure.figsize': [5.0, 3.5]}
-
     plt.rcParams.update(params)
 
     fig1, (ax1, ax2) = plt.subplots(1, 2)
 
-    ax1.matshow(Z, origin='lower', extent=(0, xmax, 0, ymax), cmap=color_code)
-    ax2.matshow(Z, origin='lower', extent=(0, xmax, 0, ymax), cmap=color_code)
+    #ax1.matshow(Z, origin='lower', extent=(0, xmax, 0, ymax), cmap=color_code)
+    ax1.matshow(Z, origin='lower', extent=(0, 500, 0, 500), cmap=color_code, aspect='auto')
+    ax2.matshow(Z, origin='lower', extent=(0, xmax, 0, ymax), cmap=color_code, aspect='auto')
 
     rect = UpdatingRect.UpdatingRect([0, 0], 0, 0, facecolor='None',
                                      edgecolor='black', linewidth=1.0)
@@ -95,6 +86,37 @@ def plot_data(md):
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
     return
+
+def remove_background():
+	"""Uses Wes's implementation to remove background from image"""
+
+	backgrounded, background = backgroundremoval.backgroundremoval(md.subset)
+	
+	top = tk.Toplevel()
+	top.title("Backgrounding results")
+	top.configure(background='#f7fcb9')
+	top.geometry('{}x{}'.format(800, 500))
+
+	msg = tk.Message(top, text="Add Backgrounded Image here")
+	msg.pack()
+	button = tk.Button(top, text="Dismiss", command=top.destroy)
+	button.pack()
+	
+	plt.rcParams.update(params)
+	fig, (ax1,ax2) = plt.subplots(1, 2)
+	ax1.matshow(backgrounded, origin='lower', cmap=color_code, aspect='auto')
+	ax1.set_title("Backgrounded image")
+	ax2.matshow(background, origin='lower', cmap=color_code, aspect='auto')
+	ax2.set_title("Background of image")
+	
+	# Create canvas and toolbar
+	canvas = FigureCanvasTkAgg(fig, top)
+	
+	# Packing the toolbar and plot into the canvas
+	canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+	canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+	
+	return
 
 
 def recolor(color_selection):
@@ -156,6 +178,20 @@ def restart_program():
     saving data) must be done before calling this function."""
     python = sys.executable
     os.execl(python, python, *sys.argv)
+
+params = {
+        'axes.labelsize': 12,
+        'font.size': 12,
+        'legend.fontsize': 12,
+        'xtick.labelsize': 12,
+        'ytick.labelsize': 12,
+        'axes.facecolor': 'CCCCCC',
+        'figure.facecolor': '#f7fcb9',
+        'text.usetex': False,
+        'figure.figsize': [5.0, 3.5]}
+
+
+
 
 # FOR BOOK KEEPING
 # Maintaining all the labels here
@@ -221,7 +257,7 @@ color_menu.add_command(
 correct_menu = tk.Menu(top, tearoff=0)
 correct_menu.add_command(
     label="Background slope removal",
-    command=process_opencv)
+    command=remove_background)
 correct_menu.add_cascade(
     label="Colors",
     menu=color_menu)
