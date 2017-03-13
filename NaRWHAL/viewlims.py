@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import messagebox
 import cv2
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # implement the default mpl key bindings
@@ -189,8 +190,9 @@ def recolor(color_selection):
     return
 
 
-def open_webpage(url):
-    webbrowser.open_new(url)
+def open_readme():
+    readme_file = open('../README.md', 'r')
+    messagebox.showinfo("Documentation", readme.read())
     return
 
 
@@ -283,10 +285,7 @@ menubar = tk.Menu(top)
 
 file_menu = tk.Menu(top, tearoff=0)
 file_menu.add_command(label="Upload", command=upload_file)
-doc_url = "https://github.com/wesleyktatum/Nanowire_Measurements"
-file_menu.add_command(
-    label="Documentation",
-    command=lambda: open_webpage(doc_url))
+file_menu.add_command(label="Documentation", command=open_readme)
 file_menu.add_command(label="Quit    [Esc]", command=top.quit)
 menubar.add_cascade(label="File", menu=file_menu)
 
