@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 %matplotlib inline
 
-def backgroundremoval(source):
+def background_removal(source):
     """
     A function to remove gradients in the background of AFM micrographs. Takes in a .txt source file and returns the
     image as a numpy array with the background gradient removed.
