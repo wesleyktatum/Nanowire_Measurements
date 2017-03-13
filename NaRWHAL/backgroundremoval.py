@@ -12,8 +12,7 @@ def backgroundremoval(afmdata):
     image as a numpy array with the background gradient removed.
     """
     #Generate a numpy array from the .txt file and convert values from m to nm
-    #afmdata = np.genfromtxt(source)
-    #afmdata= afmdata*(10**9)
+
     height, width = afmdata.shape
 
     #Remove any background that is greater than 3 stddevs from the mean. Removes gradients in the image.

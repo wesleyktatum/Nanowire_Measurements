@@ -23,7 +23,7 @@ def contour_finder(copied_image):
     '''Here we use a threshold to find the contours
     of the selected image.'''
     # now determine the threshold - we choose half the max intensity
-    ret,thresh = cv2.threshold(copied_image,130,255,cv2.THRESH_TOZERO)
+    ret,thresh = cv2.threshold(copied_image,145,255,cv2.THRESH_TOZERO)
     # this determines the contours
     dummy, contours, hierarchy =cv2.findContours(thresh,cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     return contours
@@ -48,7 +48,7 @@ def draw_line(cnts,afmimg,copied_image):
     #this determines the left and right side endpoints of the line...
     lefty = int((-int_x*line_y/line_x) + int_y)
     righty = int(((cols-int_x)*line_y/line_x)+int_y)
-    # ...but we inverse the indeces, thus generating a perpendular line
+    # ...but we inverse the indices, thus generating a perpendular line
     wire_with_line = cv2.line(copied_image,(righty,0),(lefty,cols-1),(0,255,0),2)
     return wire_with_line,righty,lefty,cols
 
