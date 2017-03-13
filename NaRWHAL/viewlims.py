@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 
 import tkinter as tk
 from tkinter import filedialog
-from tkinter import messagebox
 import cv2
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # implement the default mpl key bindings
@@ -191,8 +190,13 @@ def recolor(color_selection):
 
 
 def open_readme():
-    readme_file = open('../README.md', 'r')
-    messagebox.showinfo("Documentation", readme.read())
+    window = tk.Toplevel()
+    window.title('Documentation')
+    readme = open('../README.md', 'r')
+    var = tk.StringVar()
+    label = tk.Label(window, textvariable=var)
+    var.set(readme.read())
+    label.pack()
     return
 
 
