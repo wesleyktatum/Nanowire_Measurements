@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import math
 from matplotlib import pyplot as plt
-%matplotlib inline
 import skimage.measure
 
 def top_level(afmimg):
@@ -12,7 +11,7 @@ def top_level(afmimg):
     contours = contour_finder(copy)
     contour_points, hull_points = convex_hull_determiner(afmimg,contours)
     wire_with_line, right_point, left_point, num_cols = draw_line(contour_points,afmimg,copy)
-    profile = wire_profile(afmimg,right_point,leftpoint,num_cols)
+    profile = wire_profile(afmimg,right_point,left_point,num_cols)
     return afmimg, hull_points, wire_with_line, profile 
 
 def afm_copier(afmimg):

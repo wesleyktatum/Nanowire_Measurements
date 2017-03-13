@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import messagebox
 import cv2
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # implement the default mpl key bindings
@@ -17,6 +18,7 @@ import AfmDisplay
 import CustomToolbar
 import UpdatingRect
 import backgroundremoval
+import nanowire_detector as ND
 
 
 def clear_canvas():
@@ -68,7 +70,13 @@ def upload_file():
     filename = filedialog.askopenfilename()
     file_data = np.genfromtxt(filename)
     
+    # Changing the range of data to 0 ...
+    file_data= file_data - np.min(file_data)
+    file_data= file_data*(255.0)/np.max(file_data)
+
     get_lims()
+    
+    afmimg, hull_points, wire_with_line, profile = ND.top_level(np.uint8(file_data))
     
 
     global md
@@ -82,6 +90,7 @@ def plot_data(md):
 
     xmax, ymax = np.shape(md.data)
     Z = md(0, xmax, 0, ymax)
+    clear_canvas()
 
     plt.rcParams.update(params)
 
@@ -120,6 +129,24 @@ def plot_data(md):
 
     return
 
+def nano_analyze(data):
+	afmimg, hull_points, wire_with_line, profile = ND.top_level(data)
+	fig, (ax1,ax2, ax3) = plt.subplots(1, 3)
+	ax1.imshow(wire_with_line)
+	ax2.imshow(afmimg)
+	ax2.scatter(hull_points[:,0],hull_points[:,0])
+	ax3.plot(profile)
+	# Create canvas and toolbar
+	top = tk.Toplevel()
+	top.geometry('{}x{}'.format(800, 500))
+	top.title("Nanowire detection results")
+	canvas = FigureCanvasTkAgg(fig, top)
+	
+	# Packing the toolbar and plot into the canvas
+	canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+	canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+	return
+
 def remove_background():
 	"""Uses Wes's implementation to remove background from image"""
 
@@ -130,10 +157,10 @@ def remove_background():
 	top.configure(background='#f7fcb9')
 	top.geometry('{}x{}'.format(800, 500))
 
-	msg = tk.Message(top, text="Add Backgrounded Image here")
-	msg.pack()
-	button = tk.Button(top, text="Dismiss", command=top.destroy)
-	button.pack()
+	button1 = tk.Button(top, text="Dismiss Changes", command=top.destroy)
+	button1.pack()
+	button2 = tk.Button(top, text="Accpt Background and Analyse", command=lambda: nano_analyze(np.uint8(backgrounded)))
+	button2.pack()
 	
 	plt.rcParams.update(params)
 	fig, (ax1,ax2) = plt.subplots(1, 2)
@@ -163,8 +190,9 @@ def recolor(color_selection):
     return
 
 
-def open_webpage(url):
-    webbrowser.open_new(url)
+def open_readme():
+    readme_file = open('../README.md', 'r')
+    messagebox.showinfo("Documentation", readme.read())
     return
 
 
@@ -257,10 +285,7 @@ menubar = tk.Menu(top)
 
 file_menu = tk.Menu(top, tearoff=0)
 file_menu.add_command(label="Upload", command=upload_file)
-doc_url = "https://github.com/wesleyktatum/Nanowire_Measurements"
-file_menu.add_command(
-    label="Documentation",
-    command=lambda: open_webpage(doc_url))
+file_menu.add_command(label="Documentation", command=open_readme)
 file_menu.add_command(label="Quit    [Esc]", command=top.quit)
 menubar.add_cascade(label="File", menu=file_menu)
 
