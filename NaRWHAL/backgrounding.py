@@ -2,6 +2,10 @@ import cv2
 from skimage import color
 from skimage import exposure
 import numpy as np
+<<<<<<< HEAD
+=======
+
+>>>>>>> 77b647a5728839512a6df0a8b3fffbf4afeab367
 
 def background_removal(source):
     """
@@ -9,8 +13,7 @@ def background_removal(source):
     image as a numpy array with the background gradient removed.
     """
     #Generate a numpy array from the .txt file and convert values from m to nm
-    #afmdata = np.genfromtxt(source)
-    #afmdata= afmdata*(10**9)
+
     height, width = afmdata.shape
 
     #Remove any background that is greater than 3 stddevs from the mean. Removes gradients in the image.
