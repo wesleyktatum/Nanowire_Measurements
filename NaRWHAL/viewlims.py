@@ -129,11 +129,11 @@ def plot_data(md):
     return
 
 def nano_analyze(data):
-	afmimg, hull_points, wire_with_line, profile = ND.top_level(data)
+	afmimg, hull_points, wire_with_line, profile = ND.top_level(np.uint8(data[::-1]))
 	fig, (ax1,ax2, ax3) = plt.subplots(1, 3)
-	ax1.imshow(wire_with_line)
-	ax2.imshow(afmimg)
-	ax2.scatter(hull_points[:,0],hull_points[:,0])
+	ax1.matshow(wire_with_line, cmap=color_code, aspect='auto')
+	ax2.matshow(afmimg, cmap=color_code, aspect='auto')
+	ax2.scatter(hull_points[:,0],hull_points[:,1], c='white')
 	ax3.plot(profile)
 	# Create canvas and toolbar
 	top = tk.Toplevel()
@@ -149,7 +149,7 @@ def nano_analyze(data):
 def remove_background():
 	"""Uses Wes's implementation to remove background from image"""
 
-	backgrounded, background = backgroundremoval.backgroundremoval(md.subset)
+	backgrounded, background = backgroundremoval.backgroundremoval(np.uint8(md.subset))
 	
 	top = tk.Toplevel()
 	top.title("Backgrounding results")
@@ -158,7 +158,7 @@ def remove_background():
 
 	button1 = tk.Button(top, text="Dismiss Changes", command=top.destroy)
 	button1.pack()
-	button2 = tk.Button(top, text="Accpt Background and Analyse", command=lambda: nano_analyze(np.uint8(backgrounded)))
+	button2 = tk.Button(top, text="Accept Background and Analyze", command=lambda: nano_analyze(backgrounded))
 	button2.pack()
 	
 	plt.rcParams.update(params)

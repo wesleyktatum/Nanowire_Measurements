@@ -48,7 +48,7 @@ def draw_line(cnts,afmimg,copied_image):
     #this determines the left and right side endpoints of the line...
     lefty = int((-int_x*line_y/line_x) + int_y)
     righty = int(((cols-int_x)*line_y/line_x)+int_y)
-    # ...but we inverse the indeces, thus generating a perpendular line
+    # ...but we inverse the indices, thus generating a perpendular line
     wire_with_line = cv2.line(copied_image,(righty,0),(lefty,cols-1),(0,255,0),2)
     return wire_with_line,righty,lefty,cols
 
