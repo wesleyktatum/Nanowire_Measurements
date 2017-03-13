@@ -25,7 +25,7 @@ def contour_finder(copied_image):
     # now determine the threshold - we choose half the max intensity
     ret,thresh = cv2.threshold(copied_image,145,255,cv2.THRESH_TOZERO)
     # this determines the contours
-    dummy, contours, hierarchy =cv2.findContours(thresh,cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    dummy, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     return contours
 
 def convex_hull_determiner(afmimg,contours):
