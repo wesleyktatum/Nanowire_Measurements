@@ -32,14 +32,14 @@ def clear_canvas():
 
     return
 
+
 def get_lims():
 	"""Getting size limits from user"""
 
 	master = tk.Tk()
-	
+
 	msg = tk.Label(master, text="Enter limits").grid(row=0)
-	
-	
+
 	tk.Label(master, text="Min X [ nm ]").grid(row=1, column=0)
 	tk.Label(master, text="Max X [ nm ]").grid(row=1, column=2)
 	tk.Label(master, text="Min Y [ nm ]").grid(row=2, column=0)
@@ -49,37 +49,36 @@ def get_lims():
 	min_y = tk.Entry(master)
 	max_y = tk.Entry(master)
 	max_x = tk.Entry(master)
-	
-	min_x.insert(10,"0")
-	min_y.insert(10,"0")
-	max_x.insert(10,"500")
-	max_y.insert(10,"500")
+
+	min_x.insert(10, "0")
+	min_y.insert(10, "0")
+	max_x.insert(10, "500")
+	max_y.insert(10, "500")
 
 	min_x.grid(row=1, column=1)
 	min_y.grid(row=2, column=1)
 	max_x.grid(row=1, column=3)
 	max_y.grid(row=2, column=3)
-	
 
 	button = tk.Button(master, text="Dismiss", command=master.destroy).grid(row=3)
-	
-	#return
+
+	# return
 
 
 def upload_file():
     """ Upload the chosen file and plot the nanowire image onto the canvas"""
-    
+
     filename = filedialog.askopenfilename()
     file_data = np.genfromtxt(filename)
-    
+
     # Changing the range of data to 0 ...
-    file_data= file_data - np.min(file_data)
-    file_data= file_data*(255.0)/np.max(file_data)
+    file_data = file_data - np.min(file_data)
+    file_data = file_data * (255.0) / np.max(file_data)
 
     get_lims()
-    
-    afmimg, hull_points, wire_with_line, profile = ND.top_level(np.uint8(file_data))
-    
+
+    afmimg, hull_points, wire_with_line, profile = ND.top_level(
+        np.uint8(file_data))
 
     global md
     md = AfmDisplay.AfmDisplay(d=file_data)
