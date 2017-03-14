@@ -4,78 +4,54 @@ import math
 from matplotlib import pyplot as plt
 %matplotlib inline
 import skimage.measure
+import nanowire_detector
 
 def test_top_level():
     '''this is the function through which all other functions
     are called'''
-    afmimg = np.zeros((40,40))
-    if all(afmimg) == 0:
-        assert "there is no image here"
-    else:
-        pass
-    copy = afm_copier(afmimg)
-    contours = contour_finder(copy)
-    contour_points, hull_points = convex_hull_determiner(afmimg,contours)
-    wire_with_line, right_point, left_point, num_cols = draw_line(contour_points,afmimg,copy)
-    profile = wire_profile(afmimg,right_point,leftpoint,num_cols)
-    return afmimg, hull_points, wire_with_line, profile 
+    afmimg = np.loadtxt('afmimg_test.txt')
+    assert afmimg.all() != 0
+    assert afmimg
+    afmimg,hull_points,wire_with_line,profile = nanowire_detector.top_level(afmimg)
+    assert hull_points
+    assert wire_with_line
+    assert profile
 
 def test_afm_copier():
     '''this makes a copy of the snipped and backgrounded afm image'''
-    afmimg = np.zeros((40,40))
-    if all(afmimg) == 0:
-        assert "there is no image here"
-    else:
-        pass
-    image_copy = np.copy(afmimg)
-    return image_copy
+    afmimg = np.loadtxt('afmimg_test.txt')
+    assert afmimg.all() != 0
+    assert afmimg
+    image_copy = nanowire_detector.afm_copier(afmimg)
+    assert image_copy.all() != 0
 
 def test_contour_finder():
     '''Here we use a threshold to find the contours
     of the selected image.'''
     # now determine the threshold - we choose half the max intensity
-    copied_image = 255*np.random()*np.ones((40,40))
-    ret,thresh = cv2.threshold(copied_image,130,255,cv2.THRESH_TOZERO)
-    # this determines the contours
-    dummy, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    cnts = max(contours, key=cv2.contourArea)
-    im_with_contours=cv2.drawContours(copied_image,cnts,0,(0,0,255),2)
-    if np.isclose((im_with_contours-copied_image).all(), 0):
-        assert "no clear image of wire"
-    return contours
+    afmimg = np.loadtxt('afmimg_test.txt')
+    copied_image = np.copy(afmimg)
+    assert afmimg.all() != 0
+    contours = nanowire_detector.contour_finder(coped_image)
+    assert contours
 
 def test_convex_hull_determiner():
     '''This uses the calculated contours to determine
     the existence of a convex hull (i.e. a nanowire)'''
     # This turns the contours into an array of points
-    contours = np.empty((40,40))
-    if np.isempty(contours.all()):
-        assert "The image has no contours"
-    cnts = max(contours, key=cv2.contourArea)
-    # now we determine whether or not there is a hull
-    hull = cv2.convexHull(cnts)
-    hull = np.reshape(hull,(len(hull),2))
-    return cnts, hull
+    afmimg = np.loadtxt('afmimg_test.txt')
+    copied_image = np.copy(afmimg)
+    assert afmimg.all() != 0
+    contours = nanowire_detector.contour_finder(coped_image)
+    cnts, hull = nanowire_detector.convex_hull_determiner(afmimg,contours)
+    assert cnts
+    assert hull
 
 def test_draw_line():
     '''Here we use the convex hull to fit a line along
     the nanowire, and then switch the indeces so that
     the line lies along the short axis of the wire'''
-    afmimg = 255*np.random()*np.ones((40,40))
-    dummy, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    cnts = max(contours, key=cv2.contourArea)
-    im_with_contours=cv2.drawContours(afmimg,cnts,0,(0,0,255),2)
-    if np.isclose((im_with_contours-copied_image).all(), 0):
-        assert "no clear image of wire"
-    rows,cols = afmimg.shape[:2]
-    # Here we fit a line along the nanowire
-    [line_x, line_y, int_x, int_y] = cv2.fitLine(cnts,distType=2,param=0,reps=0.01,aeps=0.01)
-    #this determines the left and right side endpoints of the line...
-    lefty = int((-int_x*line_y/line_x) + int_y)
-    righty = int(((cols-int_x)*line_y/line_x)+int_y)
-    # ...but we inverse the indeces, thus generating a perpendular line
-    wire_with_line = cv2.line(copied_image,(righty,0),(lefty,cols-1),(0,255,0),2)
-    return wire_with_line,righty,lefty,cols
+    
 
 def test_wire_profile():
     '''Now we compute the profile and adjust to real units'''
