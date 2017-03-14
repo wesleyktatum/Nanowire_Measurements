@@ -95,7 +95,6 @@ def plot_data(md):
 
     fig1, (ax1, ax2) = plt.subplots(1, 2)
 
-    #ax1.matshow(Z, origin='lower', extent=(0, xmax, 0, ymax), cmap=color_code)
     ax1.matshow(Z, origin='lower', extent=(0, 500, 0, 500), cmap=color_code, aspect='auto')
     ax2.matshow(Z, origin='lower', extent=(0, xmax, 0, ymax), cmap=color_code, aspect='auto')
 
@@ -183,7 +182,6 @@ def recolor(color_selection):
     color_code = color_selection
 
     global md
-    clear_canvas()
     plot_data(md)
 
     return
@@ -293,16 +291,6 @@ file_menu.add_command(label="Documentation", command=open_readme)
 file_menu.add_command(label="Quit    [Esc]", command=top.quit)
 menubar.add_cascade(label="File", menu=file_menu)
 
-# Nanowire Detection menu
-process_menu = tk.Menu(top, tearoff=0)
-process_menu.add_command(
-    label="Process in opencv Algorithm",
-    command=process_opencv)
-process_menu.add_command(
-    label="Process in opencv Algorithm",
-    command=process_opencv)
-menubar.add_cascade(label="Nanowire Detection", menu=process_menu)
-
 # Color sub-menu
 color_menu = tk.Menu(top, tearoff=0)
 color_menu.add_command(
@@ -326,7 +314,7 @@ correct_menu.add_command(
 correct_menu.add_cascade(
     label="Colors",
     menu=color_menu)
-menubar.add_cascade(label="Image Manipulation", menu=correct_menu)
+menubar.add_cascade(label="Image Processing", menu=correct_menu)
 
 
 # Configuring the window with menubar
