@@ -5,9 +5,12 @@ NaRWHAL is a software for the identification and measuring of nanowires in AFM m
 
 ### Software Dependencies
 python version 3
-python packages: opencv, scikit-image, tkinter, photutils, astropy
 
-Mac OS X and Windows are both able to download python without any dependencies. Tkinter package comes with the python but for opencv, scikit-image, photutils and astropy performing pip install in command line is needed. 
+python packages: astropy, opencv, photutils, scikit-image, tkinter
+
+Mac OS X and Windows are both able to download python without any dependencies. Tkinter package comes with python, but for opencv, scikit-image, photutils and astropy performing pip install in command line is needed. 
+
+Note: To run the software in version lower than python 3, please change "import tkinter" in .py files to "import Tkinter". 
 
 ### Folders 
 - NaRWHAL
@@ -30,3 +33,4 @@ Mac OS X and Windows are both able to download python without any dependencies. 
 8. Click on "Quit" under "File to quit the software. 
 
 ### Running the tests
+In a shell script, open the directory "NaRWHAL", type in and run: nosetests -m Test.(the name of test .py file desired to run)
