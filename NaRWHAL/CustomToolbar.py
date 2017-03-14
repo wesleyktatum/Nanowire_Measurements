@@ -1,4 +1,6 @@
 from matplotlib.backends.backend_tkagg import NavigationToolbar2TkAgg
+
+
 class CustomToolbar(NavigationToolbar2TkAgg):
     """Creates custom toolbar for matplotlib display"""
 
@@ -8,4 +10,3 @@ class CustomToolbar(NavigationToolbar2TkAgg):
             ('Home', 'Revert to original image', 'home', 'home'),
         )
         NavigationToolbar2TkAgg.__init__(self, canvas_, parent_)
-
