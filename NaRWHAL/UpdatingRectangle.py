@@ -1,5 +1,6 @@
 from matplotlib.patches import Rectangle
 
+
 class UpdatingRect(Rectangle):
 	"""Overwrites rectangle to make it flexible"""
     def __call__(self, ax):
