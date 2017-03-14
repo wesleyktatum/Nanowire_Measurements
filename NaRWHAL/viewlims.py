@@ -29,7 +29,7 @@ def clear_canvas():
     if len(canvases) > 0:
         canvases[-1].get_tk_widget().delete("all")
         canvases[-1].get_tk_widget().destroy()
-        
+
     if len(msgs) > 0:
         msgs[-1].destroy()
         msgs[-2].destroy()
@@ -47,7 +47,6 @@ def upload_file():
     file_data = file_data - np.min(file_data)
     file_data = file_data * (255.0) / np.max(file_data)
 
-
     afmimg, hull_points, wire_with_line, profile = ND.top_level(
         np.uint8(file_data))
 
@@ -60,18 +59,36 @@ def upload_file():
 
 def plot_data(md):
     """Plotting the 2-piece plot to show original image"""
-    	
+
     xmax, ymax = np.shape(md.data)
     Z = md(0, xmax, 0, ymax)
-    
+
     clear_canvas()
 
     plt.rcParams.update(params)
 
     fig1, (ax1, ax2) = plt.subplots(1, 2)
 
-    ax1.matshow(Z, origin='lower', extent=(0, xmax, 0, ymax), cmap=color_code, aspect='auto')
-    ax2.matshow(Z, origin='lower', extent=(0, xmax, 0, ymax), cmap=color_code, aspect='auto')
+    ax1.matshow(
+        Z,
+        origin='lower',
+        extent=(
+            0,
+            xmax,
+            0,
+            ymax),
+        cmap=color_code,
+        aspect='auto')
+    ax2.matshow(
+        Z,
+        origin='lower',
+        extent=(
+            0,
+            xmax,
+            0,
+            ymax),
+        cmap=color_code,
+        aspect='auto')
 
     rect = UpdatingRect.UpdatingRect([0, 0], 0, 0, facecolor='None',
                                      edgecolor='black', linewidth=1.0)
@@ -93,7 +110,13 @@ def plot_data(md):
     # Create canvas and toolbar
     canvas = FigureCanvasTkAgg(fig1, top)
     toolbar = CustomToolbar.CustomToolbar(canvas, top)
-    msg1 = tk.Message(top, text="Showing file:\n"+filename, width=800, aspect=1000, background='#f7fcb9')
+    msg1 = tk.Message(
+        top,
+        text="Showing file:\n" +
+        filename,
+        width=800,
+        aspect=1000,
+        background='#f7fcb9')
 
     # Book keeping
     canvases.append(canvas)
@@ -101,92 +124,103 @@ def plot_data(md):
 
     # Packing the toolbar and plot into the canvas
     msg1.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-    toolbar.pack(side=tk.TOP, fill=tk.X,anchor=tk.CENTER)
+    toolbar.pack(side=tk.TOP, fill=tk.X, anchor=tk.CENTER)
     canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-    
-    msg2 = tk.Message(top, width=700, aspect=1000, 
-    	background='#f7fcb9', text="Zoom into your preferred nanowire on the right image \
+
+    msg2 = tk.Message(top, width=700, aspect=1000,
+                      background='#f7fcb9', text="Zoom into your preferred nanowire on the right image \
     	or reset (Home symbol). When you've selected a region with a single nanowire,\
     	initialize analysis by Image Processing->Background slope removal. You can also \
     	choose your favorite color scheme from above (Image Processing->Color).")
     msg2.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=1)
-	
+
     msgs.append(msg1)
     msgs.append(msg2)
-	
+
     return
 
-def nano_analyze(data):
-	"""Calculating height profile of nanowire and detecting outline"""
 
-	afmimg, hull_points, wire_with_line, profile = ND.top_level(np.uint8(data[::-1]))
-	fig, (ax1,ax2, ax3) = plt.subplots(1, 3)
-	ax1.matshow(wire_with_line, cmap=color_code, aspect='auto')
-	ax1.set_title("Line along cross-section of wire")
-	ax1.xaxis.set_tick_params(labeltop='off', labelbottom='on')
-	
-	ax3.matshow(afmimg, cmap=color_code, aspect='auto')
-	ax3.xaxis.set_tick_params(labeltop='off', labelbottom='on')
-	ax3.scatter(hull_points[:,0],hull_points[:,1], c='white')
-	
-	ax2.plot(profile)
-	ax2.set_title("Height profile along the line")
-	ax2.xaxis.set_tick_params(labeltop='off', labelbottom='on')
-	
-	# Create canvas and toolbar
-	top = tk.Toplevel()
-	top.geometry('{}x{}'.format(800, 500))
-	top.title("Nanowire detection results")
-	canvas = FigureCanvasTkAgg(fig, top)
-	msg = tk.Message(top, text="The algorithm detects single nanowires in the \
+def nano_analyze(data):
+    """Calculating height profile of nanowire and detecting outline"""
+
+    afmimg, hull_points, wire_with_line, profile = ND.top_level(
+        np.uint8(data[::-1]))
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+    ax1.matshow(wire_with_line, cmap=color_code, aspect='auto')
+    ax1.set_title("Line along cross-section of wire")
+    ax1.xaxis.set_tick_params(labeltop='off', labelbottom='on')
+
+    ax3.matshow(afmimg, cmap=color_code, aspect='auto')
+    ax3.xaxis.set_tick_params(labeltop='off', labelbottom='on')
+    ax3.scatter(hull_points[:, 0], hull_points[:, 1], c='white')
+
+    ax2.plot(profile)
+    ax2.set_title("Height profile along the line")
+    ax2.xaxis.set_tick_params(labeltop='off', labelbottom='on')
+
+    # Create canvas and toolbar
+    top = tk.Toplevel()
+    top.geometry('{}x{}'.format(800, 500))
+    top.title("Nanowire detection results")
+    canvas = FigureCanvasTkAgg(fig, top)
+    msg = tk.Message(top, text="The algorithm detects single nanowires in the \
 	given snippet. It makes a line perpendicular to the wire and calculates the height\
 	 of points along the line. The algoirthm also detects and outline of the nanowire",
-	  width=800, aspect=1000, background='#f7fcb9')
-	
-	# Packing the toolbar and plot into the canvas
-	msg.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-	canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-	canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-	
-	return
+                     width=800, aspect=1000, background='#f7fcb9')
+
+    # Packing the toolbar and plot into the canvas
+    msg.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+    return
+
 
 def remove_background():
-	"""Detecting and removing gradient background (only) from image"""
+    """Detecting and removing gradient background (only) from image"""
 
-	backgrounded, background = backgroundremoval.backgroundremoval(np.uint8(md.subset))
-    
-	top = tk.Toplevel()
-	top.title("Backgrounding results")
-	top.configure(background='#f7fcb9')
-	top.geometry('{}x{}'.format(800, 500))
+    backgrounded, background = backgroundremoval.backgroundremoval(
+        np.uint8(md.subset))
 
-	msg = tk.Message(top, width=800, aspect=1000, background='#f7fcb9', 
-	text="The algorithm removes percetible slopes from the background of the image")
-	msg.pack(side=tk.TOP, fill=tk.X, expand=1)
-	
-	button1 = tk.Button(top, text="Dismiss Changes", command=top.destroy)
-	button1.pack()
-	button2 = tk.Button(top, text="Accept Background and Analyze", command=lambda: nano_analyze(backgrounded))
-	button2.pack()
-	
-	plt.rcParams.update(params)
-	fig, (ax1,ax2) = plt.subplots(1, 2)
-	ax1.matshow(backgrounded, origin='lower', cmap=color_code, aspect='auto')
-	ax1.set_title("Image after processing")
-	ax1.xaxis.set_tick_params(labeltop='off', labelbottom='on')
-	ax2.matshow(background, origin='lower', cmap=color_code, aspect='auto')
-	ax2.xaxis.set_tick_params(labeltop='off', labelbottom='on')
-	ax2.set_title("Background noise removed from image")
-	
-	# Create canvas and toolbar
-	canvas = FigureCanvasTkAgg(fig, top)
-	
-	# Packing the toolbar and plot into the canvas
-	canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-	canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-	
-	return
+    top = tk.Toplevel()
+    top.title("Backgrounding results")
+    top.configure(background='#f7fcb9')
+    top.geometry('{}x{}'.format(800, 500))
+
+    msg = tk.Message(
+        top,
+        width=800,
+        aspect=1000,
+        background='#f7fcb9',
+        text="The algorithm removes percetible slopes from the background of the image")
+    msg.pack(side=tk.TOP, fill=tk.X, expand=1)
+
+    button1 = tk.Button(top, text="Dismiss Changes", command=top.destroy)
+    button1.pack()
+    button2 = tk.Button(
+        top,
+        text="Accept Background and Analyze",
+        command=lambda: nano_analyze(backgrounded))
+    button2.pack()
+
+    plt.rcParams.update(params)
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    ax1.matshow(backgrounded, origin='lower', cmap=color_code, aspect='auto')
+    ax1.set_title("Image after processing")
+    ax1.xaxis.set_tick_params(labeltop='off', labelbottom='on')
+    ax2.matshow(background, origin='lower', cmap=color_code, aspect='auto')
+    ax2.xaxis.set_tick_params(labeltop='off', labelbottom='on')
+    ax2.set_title("Background noise removed from image")
+
+    # Create canvas and toolbar
+    canvas = FigureCanvasTkAgg(fig, top)
+
+    # Packing the toolbar and plot into the canvas
+    canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+    return
 
 
 def recolor(color_selection):
@@ -203,7 +237,7 @@ def recolor(color_selection):
 
 def open_readme():
     """Open user documentation"""
-	
+
     window = tk.Toplevel()
     window.title('Documentation')
     readme = open('../README.md', 'r')
@@ -211,22 +245,20 @@ def open_readme():
     label = tk.Label(window, textvariable=var)
     var.set(readme.read())
     label.pack()
-    
+
     return
 
 
 params = {
-        'axes.labelsize': 12,
-        'font.size': 10,
-        'legend.fontsize': 12,
-        'xtick.labelsize': 12,
-        'ytick.labelsize': 12,
-        'axes.facecolor': 'CCCCCC',
-        'figure.facecolor': '#f7fcb9',
-        'text.usetex': False,
-        'figure.figsize': [5.0, 3.5]}
-
-
+    'axes.labelsize': 12,
+    'font.size': 10,
+    'legend.fontsize': 12,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    'axes.facecolor': 'CCCCCC',
+    'figure.facecolor': '#f7fcb9',
+    'text.usetex': False,
+    'figure.figsize': [5.0, 3.5]}
 
 
 # FOR BOOK KEEPING
@@ -239,8 +271,7 @@ toolbars = []
 # Input file
 md = 0
 color_code = 'viridis'
-filename=''
-
+filename = ''
 
 
 # CONFIGURING THE GUI OBJECT
