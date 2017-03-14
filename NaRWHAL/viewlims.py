@@ -33,6 +33,8 @@ def clear_canvas():
     return
 
 def get_lims():
+	"""Getting size limits from user"""
+
 	master = tk.Tk()
 	
 	msg = tk.Label(master, text="Enter limits").grid(row=0)
@@ -66,6 +68,7 @@ def get_lims():
 
 def upload_file():
     """ Upload the chosen file and plot the nanowire image onto the canvas"""
+    
     filename = filedialog.askopenfilename()
     file_data = np.genfromtxt(filename)
     
@@ -86,6 +89,7 @@ def upload_file():
 
 
 def plot_data(md):
+	"""Plotting the 2-piece plot to show original image"""
 
     xmax, ymax = np.shape(md.data)
     Z = md(0, xmax, 0, ymax)
@@ -128,6 +132,8 @@ def plot_data(md):
     return
 
 def nano_analyze(data):
+	"""Calculating height profile of nanowire and detecting outline"""
+
 	afmimg, hull_points, wire_with_line, profile = ND.top_level(np.uint8(data[::-1]))
 	fig, (ax1,ax2, ax3) = plt.subplots(1, 3)
 	ax1.matshow(wire_with_line, cmap=color_code, aspect='auto')
@@ -146,7 +152,7 @@ def nano_analyze(data):
 	return
 
 def remove_background():
-	"""Uses Wes's implementation to remove background from image"""
+	"""Detecting and removing gradient background (only) from image"""
 
 	backgrounded, background = backgroundremoval.backgroundremoval(np.uint8(md.subset))
 	
@@ -178,6 +184,8 @@ def remove_background():
 
 
 def recolor(color_selection):
+	"""Recolor the plots according to user selection"""
+
     global color_code
     color_code = color_selection
 
@@ -188,6 +196,8 @@ def recolor(color_selection):
 
 
 def open_readme():
+	"""Open user documentation"""
+	
     window = tk.Toplevel()
     window.title('Documentation')
     readme = open('../README.md', 'r')
@@ -195,52 +205,9 @@ def open_readme():
     label = tk.Label(window, textvariable=var)
     var.set(readme.read())
     label.pack()
+    
     return
 
-
-def update_status(message):
-    """Status updates to the user
-    Note: Previous status updates are deleted."""
-
-    # Checking and deleting previous labels
-    if len(labels) > 0:
-        for label in labels:
-            label.destroy()
-
-    # Configuring the new label
-    label = tk.Label(top, text=message)
-    label.pack()
-    labels.append(label)
-
-    return
-
-
-def process_opencv():
-
-    update_status("Processing image in OpenCV. Please wait ...")
-
-    # ADD PROCESSING CODE HERE
-
-    update_status("OpenCV done")
-
-    return
-
-
-def process_second():
-
-    update_status("Processing image in OpenCV. Please wait ...")
-
-    update_status("Second algorithm done")
-
-    return
-
-
-def restart_program():
-    """Restarts the current program.
-    Note: this function does not return. Any cleanup action (like
-    saving data) must be done before calling this function."""
-    python = sys.executable
-    os.execl(python, python, *sys.argv)
 
 params = {
         'axes.labelsize': 12,
