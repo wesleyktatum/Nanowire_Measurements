@@ -7,7 +7,7 @@ def test_background_removal():
     This function tests the background removal function
     """
     testdata = np.genfromtxt('../Data/UnbackgroundedTXT/5umUniformNetwork')
-    bkgd = background_removal(testdata)
+    bkgd = backgrounding.background_removal(testdata)
 
     assert bkgd != None, 'Backgrounding has deleted datafile'
     return
@@ -20,7 +20,7 @@ def test_histogram_equalization():
     
     testdata = np.genfromtxt('../Data/UnbackgroundedTXT/5umUniformNetwork')
     
-    equ = histogram_equalization(testdata)
+    equ = backgrounding.histogram_equalization(testdata)
     
     assert equ != None, 'Equalization has deleted datafile'
     return

@@ -1,11 +1,11 @@
 import cv2
-
 from skimage import color
 from skimage import exposure
-
 import numpy as np
-import matplotlib.pyplot as plt
-%matplotlib inline
+<<<<<<< HEAD
+=======
+
+>>>>>>> 77b647a5728839512a6df0a8b3fffbf4afeab367
 
 
 def background_removal(source):
