@@ -44,7 +44,8 @@ def upload_file():
     file_data = np.genfromtxt(filename)
 
     # Changing the range of data to 0 ...
-    file_data = file_data - np.min(file_data)
+    min_d = np.min(file_data)
+    file_data = file_data - min_d
     file_data = file_data * (255.0) / np.max(file_data)
 
     global md
@@ -63,7 +64,7 @@ def plot_data(md):
     """Plotting the 2-piece plot to show original image"""
 
     xmax, ymax = np.shape(md.data)
-    Z = md(0, xmax, 0, ymax)
+    #Z = md(0, xmax, 0, ymax)
 
     clear_canvas()
 
@@ -72,23 +73,23 @@ def plot_data(md):
     fig1, (ax1, ax2) = plt.subplots(1, 2)
 
     ax1.matshow(
-        Z,
+        md.data,
         origin='lower',
-        extent=(
-            0,
-            xmax,
-            0,
-            ymax),
+        # extent=(
+        #    0,
+        #    xmax,
+        #    0,
+        #    ymax),
         cmap=color_code,
         aspect='auto')
     ax2.matshow(
-        Z,
+        md.data,
         origin='lower',
-        extent=(
-            0,
-            xmax,
-            0,
-            ymax),
+        # extent=(
+        #    0,
+        #    xmax,
+        #    0,
+        #    ymax),
         cmap=color_code,
         aspect='auto')
 
@@ -148,8 +149,15 @@ def plot_data(md):
 def nano_analyze(data):
     """Calculating height profile of nanowire and detecting outline"""
 
+    min_d = np.min(data)
+    data = data - min_d
+    data = data * (255.0) / np.max(data)
+
     afmimg, hull_points, wire_with_line, profile = ND.top_level(
-        np.uint8(data[::-1]))
+        np.uint8(data[::]))
+
+    # afmimg, hull_points, wire_with_line, profile = ND.top_level(
+    #    np.uint8(255-data[::-1]))
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
     ax1.matshow(wire_with_line, cmap=color_code, aspect='auto')
     ax1.set_title("Line along cross-section of wire")
