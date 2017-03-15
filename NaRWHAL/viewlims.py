@@ -16,7 +16,7 @@ from matplotlib.figure import Figure
 import AfmDisplay
 import CustomToolbar
 import UpdatingRect
-import backgroundremoval
+import backgroundremoval as BR
 import nanowire_detector as ND
 
 
@@ -128,11 +128,13 @@ def plot_data(md):
     canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-    msg2 = tk.Message(top, width=700, aspect=1000,
-                      background='#f7fcb9', text="Zoom into your preferred nanowire on the right image \
-    	or reset (Home symbol). When you've selected a region with a single nanowire,\
-    	initialize analysis by Image Processing->Background slope removal. You can also \
-    	choose your favorite color scheme from above (Image Processing->Color).")
+    msg2 = tk.Message(
+        top,
+        width=700,
+        aspect=1000,
+        justify=tk.CENTER,
+        background='#f7fcb9',
+        text="Zoom into your preferred nanowire on the right image or reset (Home symbol). When you've selected a region with a single nanowire, initialize analysis by Image Processing->Background slope removal. You can also choose your favorite color scheme from above (Image Processing->Color).")
     msg2.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=1)
 
     msgs.append(msg1)
@@ -164,10 +166,13 @@ def nano_analyze(data):
     top.geometry('{}x{}'.format(800, 500))
     top.title("Nanowire detection results")
     canvas = FigureCanvasTkAgg(fig, top)
-    msg = tk.Message(top, text="The algorithm detects single nanowires in the \
-	given snippet. It makes a line perpendicular to the wire and calculates the height\
-	 of points along the line. The algoirthm also detects and outline of the nanowire",
-                     width=800, aspect=1000, background='#f7fcb9')
+    msg = tk.Message(
+        top,
+        text="The algorithm detects single nanowires in the given snippet. It makes a line perpendicular to the wire and calculates the height of points along the line. The algorithm also detects and outline of the nanowire",
+        width=800,
+        aspect=1000,
+        justify=tk.CENTER,
+        background='#f7fcb9')
 
     # Packing the toolbar and plot into the canvas
     msg.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
@@ -180,7 +185,7 @@ def nano_analyze(data):
 def remove_background():
     """Detecting and removing gradient background (only) from image"""
 
-    backgrounded, background = backgroundremoval.backgroundremoval(
+    backgrounded, background = BR.backgroundremoval(
         np.uint8(md.subset))
 
     top = tk.Toplevel()
@@ -193,6 +198,7 @@ def remove_background():
         width=800,
         aspect=1000,
         background='#f7fcb9',
+        justify=tk.CENTER,
         text="The algorithm removes percetible slopes from the background of the image")
     msg.pack(side=tk.TOP, fill=tk.X, expand=1)
 
