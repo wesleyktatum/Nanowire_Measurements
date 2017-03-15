@@ -121,6 +121,7 @@ def plot_data(md):
     toolbar = CustomToolbar.CustomToolbar(canvas, top)
     msg1 = tk.Message(
         top,
+        justify=tk.CENTER,
         text="Showing file:\n" +
         filename,
         width=800,
@@ -143,7 +144,7 @@ def plot_data(md):
         aspect=1000,
         justify=tk.CENTER,
         background='#f7fcb9',
-        text="Zoom into your preferred nanowire on the right image or reset (Home symbol). When you've selected a region with a single nanowire, initialize analysis by Image Processing->Background slope removal. You can also choose your favorite color scheme from above (Image Processing->Color).")
+        text="Zoom into your preferred nanowire on the right image or reset (Home symbol).\n When you've selected a region with a single nanowire, initialize analysis by Image Processing->Background slope removal.\n You can also choose your favorite color scheme from above (Image Processing->Color).")
     msg2.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=1)
 
     msgs.append(msg1)
@@ -177,7 +178,7 @@ def nano_analyze(data):
 
     # Create canvas and toolbar
     top = tk.Toplevel()
-    top.geometry('{}x{}'.format(800, 500))
+    top.geometry('{}x{}'.format(1000, 500))
     top.title("Nanowire detection results")
     canvas = FigureCanvasTkAgg(fig, top)
     msg = tk.Message(
@@ -213,7 +214,7 @@ def remove_background():
         aspect=1000,
         background='#f7fcb9',
         justify=tk.CENTER,
-        text="The algorithm removes percetible slopes from the background of the image")
+        text="The algorithm removes perceptible slopes from the background of the image")
     msg.pack(side=tk.TOP, fill=tk.X, expand=1)
 
     button1 = tk.Button(top, text="Dismiss Changes", command=top.destroy)
