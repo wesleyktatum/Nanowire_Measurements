@@ -47,12 +47,14 @@ def upload_file():
     file_data = file_data - np.min(file_data)
     file_data = file_data * (255.0) / np.max(file_data)
 
-    afmimg, hull_points, wire_with_line, profile = ND.top_level(
-        np.uint8(file_data))
-
     global md
     md = AfmDisplay.AfmDisplay(d=file_data)
     plot_data(md)
+
+    global correct_menu
+    # Enable menus now that there's an image to work on
+    correct_menu.entryconfig(0, state=tk.NORMAL)
+    correct_menu.entryconfig(1, state=tk.NORMAL)
 
     return
 
@@ -229,6 +231,11 @@ def remove_background():
     return
 
 
+def hist_equalizer():
+    """Equalizing the colors in the image"""
+    return
+
+
 def recolor(color_selection):
     """Recolor the plots according to user selection"""
 
@@ -315,15 +322,28 @@ color_menu.add_command(
     label="Magma",
     command=lambda: recolor('magma'))
 
+bkg_menu = tk.Menu(top, tearoff=0)
+bkg_menu.add_command(
+    label="Correct Contrast",
+    command=hist_equalizer)
+bkg_menu.add_command(
+    label="Remove Background Slope",
+    command=remove_background)
+
+
 # Image Manipulation menu
 correct_menu = tk.Menu(top, tearoff=0)
-correct_menu.add_command(
-    label="Background slope removal",
-    command=remove_background)
+correct_menu.add_cascade(
+    label="Background Correction",
+    menu=bkg_menu)
 correct_menu.add_cascade(
     label="Colors",
     menu=color_menu)
 menubar.add_cascade(label="Image Processing", menu=correct_menu)
+
+# Disabling menus since image hasn't been uploaded yet
+correct_menu.entryconfig(0, state=tk.DISABLED)
+correct_menu.entryconfig(1, state=tk.DISABLED)
 
 
 # Configuring the window with menubar
