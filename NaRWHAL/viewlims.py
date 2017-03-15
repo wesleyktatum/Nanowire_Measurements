@@ -36,17 +36,24 @@ def clear_canvas():
     return
 
 
+def normalize_data(file_data):
+    """Converting range of data from 0-255."""
+
+    # Changing the range of data to 0 ...
+    min_d = np.min(file_data)
+    file_data = file_data - min_d
+    file_data = file_data * (255.0) / np.max(file_data)
+
+    return file_data
+
+
 def upload_file():
     """ Upload the chosen file and plot the nanowire image onto the canvas"""
 
     global filename
     filename = filedialog.askopenfilename()
     file_data = np.genfromtxt(filename)
-
-    # Changing the range of data to 0 ...
-    min_d = np.min(file_data)
-    file_data = file_data - min_d
-    file_data = file_data * (255.0) / np.max(file_data)
+    file_data = normalize_data(file_data)
 
     global md
     md = AfmDisplay.AfmDisplay(d=file_data)
@@ -74,7 +81,7 @@ def plot_data(md):
     ax1.matshow(
         md.data,
         origin='lower',
-         extent=(
+        extent=(
             0,
             xmax,
             0,
@@ -84,7 +91,7 @@ def plot_data(md):
     ax2.matshow(
         md.data,
         origin='lower',
-         extent=(
+        extent=(
             0,
             xmax,
             0,
@@ -148,9 +155,7 @@ def plot_data(md):
 def nano_analyze(data):
     """Calculating height profile of nanowire and detecting outline"""
 
-    min_d = np.min(data)
-    data = data - min_d
-    data = data * (255.0) / np.max(data)
+    data = normalize_data(data)
 
     afmimg, hull_points, wire_with_line, profile = ND.top_level(
         np.uint8(data[::-1]))
