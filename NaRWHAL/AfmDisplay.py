@@ -20,8 +20,8 @@ class AfmDisplay(object):
 
         self.height = h
         self.width = w
-        self.data = np.copy(d)
-        self.subset = np.copy(d)
+        self.data = np.uint8(np.copy(d))
+        self.subset = np.uint8(np.copy(d))
 
     def __call__(self, xstart, xend, ystart, yend):
         """Crops user-image according to zoomed data"""

@@ -169,6 +169,7 @@ def nano_analyze(data):
     ax1.xaxis.set_tick_params(labeltop='off', labelbottom='on')
 
     ax3.matshow(afmimg, cmap=color_code, aspect='auto')
+    ax3.set_title("Outline of nanowire")
     ax3.xaxis.set_tick_params(labeltop='off', labelbottom='on')
     ax3.scatter(hull_points[:, 0], hull_points[:, 1], c='white')
 
