@@ -64,7 +64,6 @@ def plot_data(md):
     """Plotting the 2-piece plot to show original image"""
 
     xmax, ymax = np.shape(md.data)
-    #Z = md(0, xmax, 0, ymax)
 
     clear_canvas()
 
@@ -75,21 +74,21 @@ def plot_data(md):
     ax1.matshow(
         md.data,
         origin='lower',
-        # extent=(
-        #    0,
-        #    xmax,
-        #    0,
-        #    ymax),
+         extent=(
+            0,
+            xmax,
+            0,
+            ymax),
         cmap=color_code,
         aspect='auto')
     ax2.matshow(
         md.data,
         origin='lower',
-        # extent=(
-        #    0,
-        #    xmax,
-        #    0,
-        #    ymax),
+         extent=(
+            0,
+            xmax,
+            0,
+            ymax),
         cmap=color_code,
         aspect='auto')
 
@@ -154,7 +153,7 @@ def nano_analyze(data):
     data = data * (255.0) / np.max(data)
 
     afmimg, hull_points, wire_with_line, profile = ND.top_level(
-        np.uint8(data[::]))
+        np.uint8(data[::-1]))
 
     # afmimg, hull_points, wire_with_line, profile = ND.top_level(
     #    np.uint8(255-data[::-1]))
