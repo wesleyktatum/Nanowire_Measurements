@@ -7,7 +7,7 @@ import webbrowser
 import matplotlib.pyplot as plt
 
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, Scrollbar, Text
 import cv2
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # implement the default mpl key bindings
@@ -267,11 +267,14 @@ def open_readme():
 
     window = tk.Toplevel()
     window.title('Documentation')
+    scrollbar = Scrollbar(window)
+    scrollbar.pack(side="right", fill="y")
+    text = Text(window, wrap="word", yscrollcommand=scrollbar.set)
     readme = open('../README.md', 'r')
-    var = tk.StringVar()
-    label = tk.Label(window, textvariable=var)
-    var.set(readme.read())
-    label.pack()
+    text.insert("end", readme.read())
+    text.config(font="Times", background="lightblue")
+    text.pack()
+    scrollbar.config(command=text.yview)
 
     return
 
