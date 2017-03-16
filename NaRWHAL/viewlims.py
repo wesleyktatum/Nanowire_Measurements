@@ -4,15 +4,16 @@ import numpy as np
 import sys
 import os
 import webbrowser
+import matplotlib
 import matplotlib.pyplot as plt
-
-import tkinter as tk
-from tkinter import filedialog, Scrollbar, Text
-import cv2
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-# implement the default mpl key bindings
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
+import tkinter as tk
+from tkinter import filedialog, Scrollbar, Text
+matplotlib.use('TkAgg')
+import cv2
+# implement the default mpl key bindings
 import AfmDisplay
 import CustomToolbar
 import UpdatingRect
