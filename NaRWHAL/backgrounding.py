@@ -3,10 +3,6 @@ from skimage import color
 from skimage import exposure
 from photutils import Background2D, SigmaClip, MedianBackground
 import numpy as np
-<<<<<<< HEAD
-
-=======
->>>>>>> ad6ac31a1fad16d761249e0b3490d4ca959ec4ce
 
 def background_removal(afmdata):
     """
