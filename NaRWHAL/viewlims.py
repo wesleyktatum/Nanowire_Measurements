@@ -74,7 +74,7 @@ def plot_data(md):
 
     xmax, ymax = np.shape(md.data)
 
-	# Deleting previous elements to get a new plot
+    # Deleting previous elements to get a new plot
     clear_canvas()
 
     plt.rcParams.update(params)
@@ -248,11 +248,6 @@ def remove_background():
     return
 
 
-def hist_equalizer():
-    """Equalizing the colors in the image"""
-    return
-
-
 def recolor(color_selection):
     """Recolor the plots according to user selection"""
 
@@ -343,9 +338,6 @@ color_menu.add_command(
     command=lambda: recolor('magma'))
 
 bkg_menu = tk.Menu(top, tearoff=0)
-bkg_menu.add_command(
-    label="Correct Contrast",
-    command=hist_equalizer)
 bkg_menu.add_command(
     label="Remove Background Slope",
     command=remove_background)
