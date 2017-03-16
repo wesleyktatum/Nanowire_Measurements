@@ -16,7 +16,7 @@ from matplotlib.figure import Figure
 import AfmDisplay
 import CustomToolbar
 import UpdatingRect
-import backgroundremoval as BR
+import backgrounding as BR
 import nanowire_detector as ND
 
 
