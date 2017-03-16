@@ -17,13 +17,15 @@ class AfmDisplay(object):
 
     def __init__(self, h=500, w=500, d=''):
         """Initialize variables"""
+
         self.height = h
         self.width = w
-        self.data = d
-        self.subset = np.copy(d)
+        self.data = np.uint8(np.copy(d))
+        self.subset = np.uint8(np.copy(d))
 
     def __call__(self, xstart, xend, ystart, yend):
         """Crops user-image according to zoomed data"""
+
         self.subset = self.data[
             int(ystart):int(yend),
             int(xstart):int(xend)]
@@ -31,6 +33,7 @@ class AfmDisplay(object):
 
     def ax_update(self, ax):
         """Updates the figure axes to zoom in"""
+
         ax.set_autoscale_on(False)  # Otherwise, infinite loop
 
         # Get the number of points from the number of pixels in the window

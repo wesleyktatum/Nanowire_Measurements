@@ -16,7 +16,7 @@ from matplotlib.figure import Figure
 import AfmDisplay
 import CustomToolbar
 import UpdatingRect
-import backgroundremoval
+import backgroundremoval as BR
 import nanowire_detector as ND
 
 
@@ -36,23 +36,33 @@ def clear_canvas():
     return
 
 
+def normalize_data(file_data):
+    """Converting range of data from 0-255."""
+
+    # Changing the range of data to 0 ...
+    min_d = np.min(file_data)
+    file_data = file_data - min_d
+    file_data = file_data * (255.0) / np.max(file_data)
+
+    return file_data
+
+
 def upload_file():
     """ Upload the chosen file and plot the nanowire image onto the canvas"""
 
     global filename
     filename = filedialog.askopenfilename()
     file_data = np.genfromtxt(filename)
-
-    # Changing the range of data to 0 ...
-    file_data = file_data - np.min(file_data)
-    file_data = file_data * (255.0) / np.max(file_data)
-
-    afmimg, hull_points, wire_with_line, profile = ND.top_level(
-        np.uint8(file_data))
+    file_data = normalize_data(file_data)
 
     global md
     md = AfmDisplay.AfmDisplay(d=file_data)
     plot_data(md)
+
+    global correct_menu
+    # Enable menus now that there's an image to work on
+    correct_menu.entryconfig(0, state=tk.NORMAL)
+    correct_menu.entryconfig(1, state=tk.NORMAL)
 
     return
 
@@ -61,7 +71,6 @@ def plot_data(md):
     """Plotting the 2-piece plot to show original image"""
 
     xmax, ymax = np.shape(md.data)
-    Z = md(0, xmax, 0, ymax)
 
     clear_canvas()
 
@@ -70,7 +79,7 @@ def plot_data(md):
     fig1, (ax1, ax2) = plt.subplots(1, 2)
 
     ax1.matshow(
-        Z,
+        md.data,
         origin='lower',
         extent=(
             0,
@@ -80,7 +89,7 @@ def plot_data(md):
         cmap=color_code,
         aspect='auto')
     ax2.matshow(
-        Z,
+        md.data,
         origin='lower',
         extent=(
             0,
@@ -112,6 +121,7 @@ def plot_data(md):
     toolbar = CustomToolbar.CustomToolbar(canvas, top)
     msg1 = tk.Message(
         top,
+        justify=tk.CENTER,
         text="Showing file:\n" +
         filename,
         width=800,
@@ -128,11 +138,13 @@ def plot_data(md):
     canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-    msg2 = tk.Message(top, width=700, aspect=1000,
-                      background='#f7fcb9', text="Zoom into your preferred nanowire on the right image \
-    	or reset (Home symbol). When you've selected a region with a single nanowire,\
-    	initialize analysis by Image Processing->Background slope removal. You can also \
-    	choose your favorite color scheme from above (Image Processing->Color).")
+    msg2 = tk.Message(
+        top,
+        width=700,
+        aspect=1000,
+        justify=tk.CENTER,
+        background='#f7fcb9',
+        text="Zoom into your preferred nanowire on the right image or reset (Home symbol).\n When you've selected a region with a single nanowire, initialize analysis by Image Processing->Background slope removal.\n You can also choose your favorite color scheme from above (Image Processing->Color).")
     msg2.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=1)
 
     msgs.append(msg1)
@@ -144,14 +156,20 @@ def plot_data(md):
 def nano_analyze(data):
     """Calculating height profile of nanowire and detecting outline"""
 
+    data = normalize_data(data)
+
     afmimg, hull_points, wire_with_line, profile = ND.top_level(
         np.uint8(data[::-1]))
+
+    # afmimg, hull_points, wire_with_line, profile = ND.top_level(
+    #    np.uint8(255-data[::-1]))
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
     ax1.matshow(wire_with_line, cmap=color_code, aspect='auto')
     ax1.set_title("Line along cross-section of wire")
     ax1.xaxis.set_tick_params(labeltop='off', labelbottom='on')
 
     ax3.matshow(afmimg, cmap=color_code, aspect='auto')
+    ax3.set_title("Outline of nanowire")
     ax3.xaxis.set_tick_params(labeltop='off', labelbottom='on')
     ax3.scatter(hull_points[:, 0], hull_points[:, 1], c='white')
 
@@ -161,13 +179,16 @@ def nano_analyze(data):
 
     # Create canvas and toolbar
     top = tk.Toplevel()
-    top.geometry('{}x{}'.format(800, 500))
+    top.geometry('{}x{}'.format(1000, 500))
     top.title("Nanowire detection results")
     canvas = FigureCanvasTkAgg(fig, top)
-    msg = tk.Message(top, text="The algorithm detects single nanowires in the \
-	given snippet. It makes a line perpendicular to the wire and calculates the height\
-	 of points along the line. The algoirthm also detects and outline of the nanowire",
-                     width=800, aspect=1000, background='#f7fcb9')
+    msg = tk.Message(
+        top,
+        text="The algorithm detects single nanowires in the given snippet. It makes a line perpendicular to the wire and calculates the height of points along the line. The algorithm also detects and outline of the nanowire",
+        width=800,
+        aspect=1000,
+        justify=tk.CENTER,
+        background='#f7fcb9')
 
     # Packing the toolbar and plot into the canvas
     msg.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
@@ -180,7 +201,7 @@ def nano_analyze(data):
 def remove_background():
     """Detecting and removing gradient background (only) from image"""
 
-    backgrounded, background = backgroundremoval.backgroundremoval(
+    backgrounded, background = BR.backgroundremoval(
         np.uint8(md.subset))
 
     top = tk.Toplevel()
@@ -193,7 +214,8 @@ def remove_background():
         width=800,
         aspect=1000,
         background='#f7fcb9',
-        text="The algorithm removes percetible slopes from the background of the image")
+        justify=tk.CENTER,
+        text="The algorithm removes perceptible slopes from the background of the image")
     msg.pack(side=tk.TOP, fill=tk.X, expand=1)
 
     button1 = tk.Button(top, text="Dismiss Changes", command=top.destroy)
@@ -220,6 +242,11 @@ def remove_background():
     canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
     canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
+    return
+
+
+def hist_equalizer():
+    """Equalizing the colors in the image"""
     return
 
 
@@ -309,15 +336,28 @@ color_menu.add_command(
     label="Magma",
     command=lambda: recolor('magma'))
 
+bkg_menu = tk.Menu(top, tearoff=0)
+bkg_menu.add_command(
+    label="Correct Contrast",
+    command=hist_equalizer)
+bkg_menu.add_command(
+    label="Remove Background Slope",
+    command=remove_background)
+
+
 # Image Manipulation menu
 correct_menu = tk.Menu(top, tearoff=0)
-correct_menu.add_command(
-    label="Background slope removal",
-    command=remove_background)
+correct_menu.add_cascade(
+    label="Background Correction",
+    menu=bkg_menu)
 correct_menu.add_cascade(
     label="Colors",
     menu=color_menu)
 menubar.add_cascade(label="Image Processing", menu=correct_menu)
+
+# Disabling menus since image hasn't been uploaded yet
+correct_menu.entryconfig(0, state=tk.DISABLED)
+correct_menu.entryconfig(1, state=tk.DISABLED)
 
 
 # Configuring the window with menubar
