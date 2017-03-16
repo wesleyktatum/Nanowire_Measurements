@@ -5,13 +5,13 @@ import sys
 import os
 import webbrowser
 import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
 import tkinter as tk
 from tkinter import filedialog, Scrollbar, Text
-matplotlib.use('TkAgg')
 import cv2
 # implement the default mpl key bindings
 import AfmDisplay
