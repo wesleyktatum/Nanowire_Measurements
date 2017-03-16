@@ -16,7 +16,7 @@ from matplotlib.figure import Figure
 import AfmDisplay
 import CustomToolbar
 import UpdatingRect
-import backgroundremoval as BR
+import backgrounding as BR
 import nanowire_detector as ND
 
 
@@ -54,6 +54,7 @@ def upload_file():
     filename = filedialog.askopenfilename()
     file_data = np.genfromtxt(filename)
     file_data = normalize_data(file_data)
+    file_data = BR.histogram_equalization(np.uint8(file_data))
 
     global md
     md = AfmDisplay.AfmDisplay(d=file_data)
@@ -72,6 +73,7 @@ def plot_data(md):
 
     xmax, ymax = np.shape(md.data)
 
+	# Deleting previous elements to get a new plot
     clear_canvas()
 
     plt.rcParams.update(params)
@@ -201,7 +203,7 @@ def nano_analyze(data):
 def remove_background():
     """Detecting and removing gradient background (only) from image"""
 
-    backgrounded, background = BR.backgroundremoval(
+    backgrounded, background = BR.background_removal(
         np.uint8(md.subset))
 
     top = tk.Toplevel()

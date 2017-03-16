@@ -1,14 +1,11 @@
 import cv2
 from skimage import color
 from skimage import exposure
+from photutils import Background2D, SigmaClip, MedianBackground
 import numpy as np
-<<<<<<< HEAD
-=======
-
->>>>>>> 77b647a5728839512a6df0a8b3fffbf4afeab367
 
 
-def background_removal(source):
+def background_removal(afmdata):
     """
     A function to remove gradients in the background of AFM micrographs. Takes in a .txt source file and returns the
     image as a numpy array with the background gradient removed.
